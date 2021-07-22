@@ -21,7 +21,6 @@ const resolvers = {
     },
     login: async (_, { email, password }) => {
       const user = await User.findOne({ email });
-
       if (!user) {
         throw new AuthenticationError('No user with this email found!');
       }
@@ -36,12 +35,11 @@ const resolvers = {
       return { token, user };
     },
 
-    saveBook: async (_, { authors, description, title, bookId, image, link }, context) => {
-      
+    saveBook: async (_, args, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
-          { _id: user._id },
-          { $addToSet: { savedBooks: body } },
+          { _id: context.user._id },
+          { $addToSet: { savedBooks: args } },
           { new: true, runValidators: true }
         );
       }
@@ -53,7 +51,7 @@ const resolvers = {
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { savedBooks: { bookId: params.bookId } } },
+          { $pull: { savedBooks: { bookId: bookId } } },
           { new: true }
         );
       }

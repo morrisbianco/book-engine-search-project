@@ -22,28 +22,23 @@ const SignupForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-console.log(1)
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
-      console.log(2)
     }
 
     try {
       const { data } = await addUser({
         variables: { ...userFormData }
       });
-      
-      console.log(3)
-     
+           
       Auth.login(data.addUser.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
-      console.log(4)
     }
 
     setUserFormData({
@@ -51,7 +46,6 @@ console.log(1)
       email: '',
       password: '',
     });
-    console.log(5)
   };
 
   return (

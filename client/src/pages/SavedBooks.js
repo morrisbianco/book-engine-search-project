@@ -14,7 +14,27 @@ const SavedBooks = () => {
   
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
-  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
+
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK, {
+    // The update method allows us to access and update the local cache
+    update(cache, { data: { me } }) {
+      try {
+        // First we retrieve existing profile data that is stored in the cache under the `QUERY_PROFILES` query
+        // Could potentially not exist yet, so wrap in a try/catch
+        const { me: { savedBooks } } = cache.readQuery({ query: GET_ME });
+        // Then we update the cache by combining existing profile data with the newly created data returned from the mutation
+        const meData = { ...me };
+        cache.writeQuery({
+          query: GET_ME,
+          // If we want new data to show up before or after existing data, adjust the order of this array
+
+          data: { me: meData },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+  });
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
