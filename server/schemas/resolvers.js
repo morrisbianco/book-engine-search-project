@@ -16,10 +16,6 @@ const resolvers = {
     addUser: async (_, { username, email, password }) => {
       const user = await User.create({ username, email, password });
       
-      if (!user) {
-        throw new AuthenticationError('Something went wrong!');
-      }
-      
       const token = signToken(user);
       return { token, user };
     },
